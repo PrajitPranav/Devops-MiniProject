@@ -1,0 +1,45 @@
+# ── Deployment ────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schemind-frontend
+  labels:
+    app: schemind-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schemind-frontend
+  template:
+    metadata:
+      labels:
+        app: schemind-frontend
+    spec:
+      containers:
+        - name: schemind-frontend
+          image: prajitpranavk/schemind-frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+
+---
+# ── Service (NodePort) ────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: schemind-frontend-service
+spec:
+  type: NodePort
+  selector:
+    app: schemind-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
